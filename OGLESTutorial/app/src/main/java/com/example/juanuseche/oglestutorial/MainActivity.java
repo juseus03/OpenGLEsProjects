@@ -29,7 +29,7 @@ public class MainActivity extends AppCompatActivity {
             mGLSurfaceView.setEGLContextClientVersion(2);
 
             // Set the renderer to our demo renderer, defined below.
-            mGLSurfaceView.setEGLConfigChooser(8 , 8, 8, 8, 16, 0);
+            mGLSurfaceView.setEGLConfigChooser(8 , 8, 8, 8, 16, 0); //Makes the emulator to work, not necessary if install is made directly in a phone
             mGLSurfaceView.setRenderer(new MyGLEsRender(this));
         }
         else

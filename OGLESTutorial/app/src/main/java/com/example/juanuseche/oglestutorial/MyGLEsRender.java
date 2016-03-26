@@ -451,8 +451,8 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
         // Do a complete rotation every 10 seconds.
         long time = SystemClock.uptimeMillis() % 10000L;
-        float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
-        changeTexture(angleInDegrees);
+        float flick_time = (10.0f / 10000.0f) * ((int) time);
+        changeTexture(flick_time);
         // Set our per-vertex lighting program.
         GLES20.glUseProgram(mProgramHandle);
 
@@ -488,16 +488,20 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -5.0f);
         Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
-        drawCube();
+        drawSquare();
 
         // Draw a point to indicate the light.
         GLES20.glUseProgram(mPointProgramHandle);
         drawLight();
     }
 
-    private void changeTexture(float angle) {
+    /**
+     * Changes the information in the texture handle deppending on the value of time
+     * @param time: Time in ms passed from the last draw of the frame
+     */
+    private void changeTexture(float time) {
 
-        if(angle>180){
+        if(time>5){
             mTextureDataHandle = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularblanco);
         }
         else{
@@ -509,7 +513,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
     /**
      * Draws a cube.
      */
-    private void drawCube()
+    private void drawSquare()
     {
         // Pass in the position information
         mCubePositions.position(0);
