@@ -30,7 +30,7 @@ public class MainActivity extends AppCompatActivity {
 
             // Set the renderer to our demo renderer, defined below.
             mGLSurfaceView.setEGLConfigChooser(8 , 8, 8, 8, 16, 0);
-            mGLSurfaceView.setRenderer(new MyGLEsRender());
+            mGLSurfaceView.setRenderer(new MyGLEsRender(this));
         }
         else
         {

@@ -1,5 +1,6 @@
 package com.example.juanuseche.oglestutorial;
 
+import android.content.Context;
 import android.opengl.GLES20;
 import android.opengl.GLSurfaceView;
 import android.opengl.Matrix;
@@ -20,7 +21,9 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
 
     /** Used for debug logs. */
-    private static final String TAG = "LessonTwoRenderer";
+    private static final String TAG = "LessonFourRenderer";
+
+    private final Context mActivityContext;
 
     /**
      * Store the model matrix. This matrix is used to move models from object space (where each model can be thought
@@ -49,6 +52,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
     private final FloatBuffer mCubePositions;
     private final FloatBuffer mCubeColors;
     private final FloatBuffer mCubeNormals;
+    private final FloatBuffer mCubeTextureCoordinates;
 
     /** This will be used to pass in the transformation matrix. */
     private int mMVPMatrixHandle;
@@ -59,6 +63,9 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
     /** This will be used to pass in the light position. */
     private int mLightPosHandle;
 
+    /** This will be used to pass in the texture. */
+    private int mTextureUniformHandle;
+
     /** This will be used to pass in model position information. */
     private int mPositionHandle;
 
@@ -67,6 +74,9 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
     /** This will be used to pass in model normal information. */
     private int mNormalHandle;
+
+    /** This will be used to pass in model texture coordinate information. */
+    private int mTextureCoordinateHandle;
 
     /** How many bytes per float. */
     private final int mBytesPerFloat = 4;
@@ -80,6 +90,9 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
     /** Size of the normal data in elements. */
     private final int mNormalDataSize = 3;
 
+    /** Size of the texture coordinate data in elements. */
+    private final int mTextureCoordinateDataSize = 2;
+
     /** Used to hold a light centered on the origin in model space. We need a 4th coordinate so we can get translations to work when
      *  we multiply this by our transformation matrices. */
     private final float[] mLightPosInModelSpace = new float[] {0.0f, 0.0f, 0.0f, 1.0f};
@@ -90,17 +103,22 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
     /** Used to hold the transformed position of the light in eye space (after transformation via modelview matrix) */
     private final float[] mLightPosInEyeSpace = new float[4];
 
-    /** This is a handle to our per-vertex cube shading program. */
-    private int mPerVertexProgramHandle;
+    /** This is a handle to our cube shading program. */
+    private int mProgramHandle;
 
     /** This is a handle to our light point program. */
     private int mPointProgramHandle;
 
+    /** This is a handle to our texture data. */
+    private int mTextureDataHandle;
+
     /**
      * Initialize the model data.
      */
-    public MyGLEsRender()
+    public MyGLEsRender(final Context activityContext)
     {
+        mActivityContext = activityContext;
+
         // Define points for a cube.
 
         // X, Y, Z
@@ -267,6 +285,62 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         0.0f, -1.0f, 0.0f
                 };
 
+        // S, T (or X, Y)
+        // Texture coordinate data.
+        // Because images have a Y axis pointing downward (values increase as you move down the image) while
+        // OpenGL has a Y axis pointing upward, we adjust for that here by flipping the Y axis.
+        // What's more is that the texture coordinates are the same for every face.
+        final float[] cubeTextureCoordinateData =
+                {
+                        // Front face
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f,
+
+                        // Right face
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f,
+
+                        // Back face
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f,
+
+                        // Left face
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f,
+
+                        // Top face
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f,
+
+                        // Bottom face
+                        0.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 0.0f,
+                        0.0f, 1.0f,
+                        1.0f, 1.0f,
+                        1.0f, 0.0f
+                };
+
         // Initialize the buffers.
         mCubePositions = ByteBuffer.allocateDirect(cubePositionData.length * mBytesPerFloat)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
@@ -279,69 +353,20 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         mCubeNormals = ByteBuffer.allocateDirect(cubeNormalData.length * mBytesPerFloat)
                 .order(ByteOrder.nativeOrder()).asFloatBuffer();
         mCubeNormals.put(cubeNormalData).position(0);
+
+        mCubeTextureCoordinates = ByteBuffer.allocateDirect(cubeTextureCoordinateData.length * mBytesPerFloat)
+                .order(ByteOrder.nativeOrder()).asFloatBuffer();
+        mCubeTextureCoordinates.put(cubeTextureCoordinateData).position(0);
     }
 
     protected String getVertexShader()
     {
-        // Define our per-pixel lighting shader.
-        final String perPixelVertexShader =
-                "uniform mat4 u_MVPMatrix;      \n"		// A constant representing the combined model/view/projection matrix.
-                        + "uniform mat4 u_MVMatrix;       \n"		// A constant representing the combined model/view matrix.
-
-                        + "attribute vec4 a_Position;     \n"		// Per-vertex position information we will pass in.
-                        + "attribute vec4 a_Color;        \n"		// Per-vertex color information we will pass in.
-                        + "attribute vec3 a_Normal;       \n"		// Per-vertex normal information we will pass in.
-
-                        + "varying vec3 v_Position;       \n"		// This will be passed into the fragment shader.
-                        + "varying vec4 v_Color;          \n"		// This will be passed into the fragment shader.
-                        + "varying vec3 v_Normal;         \n"		// This will be passed into the fragment shader.
-
-                        // The entry point for our vertex shader.
-                        + "void main()                                                \n"
-                        + "{                                                          \n"
-                        // Transform the vertex into eye space.
-                        + "   v_Position = vec3(u_MVMatrix * a_Position);             \n"
-                        // Pass through the color.
-                        + "   v_Color = a_Color;                                      \n"
-                        // Transform the normal's orientation into eye space.
-                        + "   v_Normal = vec3(u_MVMatrix * vec4(a_Normal, 0.0));      \n"
-                        // gl_Position is a special variable used to store the final position.
-                        // Multiply the vertex by the matrix to get the final point in normalized screen coordinates.
-                        + "   gl_Position = u_MVPMatrix * a_Position;                 \n"
-                        + "}                                                          \n";
-
-        return perPixelVertexShader;
+        return RawResourceReader.readTextFileFromRawResource(mActivityContext, R.raw.texture_per_pixel_vertex_shader);
     }
 
     protected String getFragmentShader()
     {
-        final String perPixelFragmentShader =
-                "precision mediump float;       \n"		// Set the default precision to medium. We don't need as high of a
-                        // precision in the fragment shader.
-                        + "uniform vec3 u_LightPos;       \n"	    // The position of the light in eye space.
-
-                        + "varying vec3 v_Position;		\n"		// Interpolated position for this fragment.
-                        + "varying vec4 v_Color;          \n"		// This is the color from the vertex shader interpolated across the
-                        // triangle per fragment.
-                        + "varying vec3 v_Normal;         \n"		// Interpolated normal for this fragment.
-
-                        // The entry point for our fragment shader.
-                        + "void main()                    \n"
-                        + "{                              \n"
-                        // Will be used for attenuation.
-                        + "   float distance = length(u_LightPos - v_Position);                  \n"
-                        // Get a lighting direction vector from the light to the vertex.
-                        + "   vec3 lightVector = normalize(u_LightPos - v_Position);             \n"
-                        // Calculate the dot product of the light vector and vertex normal. If the normal and light vector are
-                        // pointing in the same direction then it will get max illumination.
-                        + "   float diffuse = max(dot(v_Normal, lightVector), 0.1);              \n"
-                        // Add attenuation.
-                        + "   diffuse = diffuse * (1.0 / (1.0 + (0.25 * distance * distance)));  \n"
-                        // Multiply the color by the diffuse illumination level to get final output color.
-                        + "   gl_FragColor = v_Color * diffuse;                                  \n"
-                        + "}                                                                     \n";
-
-        return perPixelFragmentShader;
+        return RawResourceReader.readTextFileFromRawResource(mActivityContext, R.raw.texture_per_pixel_fragment_shader);
     }
 
     @Override
@@ -355,6 +380,10 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
         // Enable depth testing
         GLES20.glEnable(GLES20.GL_DEPTH_TEST);
+
+        // The below glEnable() call is a holdover from OpenGL ES 1, and is not needed in OpenGL ES 2.
+        // Enable texture mapping
+        // GLES20.glEnable(GLES20.GL_TEXTURE_2D);
 
         // Position the eye in front of the origin.
         final float eyeX = 0.0f;
@@ -379,35 +408,23 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         final String vertexShader = getVertexShader();
         final String fragmentShader = getFragmentShader();
 
-        final int vertexShaderHandle = compileShader(GLES20.GL_VERTEX_SHADER, vertexShader);
-        final int fragmentShaderHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, fragmentShader);
+        final int vertexShaderHandle = ShaderHelper.compileShader(GLES20.GL_VERTEX_SHADER, vertexShader);
+        final int fragmentShaderHandle = ShaderHelper.compileShader(GLES20.GL_FRAGMENT_SHADER, fragmentShader);
 
-        mPerVertexProgramHandle = createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle,
-                new String[] {"a_Position",  "a_Color", "a_Normal"});
+        mProgramHandle = ShaderHelper.createAndLinkProgram(vertexShaderHandle, fragmentShaderHandle,
+                new String[] {"a_Position",  "a_Color", "a_Normal", "a_TexCoordinate"});
 
         // Define a simple shader program for our point.
-        final String pointVertexShader =
-                "uniform mat4 u_MVPMatrix;      \n"
-                        +	"attribute vec4 a_Position;     \n"
-                        + "void main()                    \n"
-                        + "{                              \n"
-                        + "   gl_Position = u_MVPMatrix   \n"
-                        + "               * a_Position;   \n"
-                        + "   gl_PointSize = 5.0;         \n"
-                        + "}                              \n";
+        final String pointVertexShader = RawResourceReader.readTextFileFromRawResource(mActivityContext, R.raw.point_vertex_shader);
+        final String pointFragmentShader = RawResourceReader.readTextFileFromRawResource(mActivityContext, R.raw.point_fragment_shader);
 
-        final String pointFragmentShader =
-                "precision mediump float;       \n"
-                        + "void main()                    \n"
-                        + "{                              \n"
-                        + "   gl_FragColor = vec4(1.0,    \n"
-                        + "   1.0, 1.0, 1.0);             \n"
-                        + "}                              \n";
-
-        final int pointVertexShaderHandle = compileShader(GLES20.GL_VERTEX_SHADER, pointVertexShader);
-        final int pointFragmentShaderHandle = compileShader(GLES20.GL_FRAGMENT_SHADER, pointFragmentShader);
-        mPointProgramHandle = createAndLinkProgram(pointVertexShaderHandle, pointFragmentShaderHandle,
+        final int pointVertexShaderHandle = ShaderHelper.compileShader(GLES20.GL_VERTEX_SHADER, pointVertexShader);
+        final int pointFragmentShaderHandle = ShaderHelper.compileShader(GLES20.GL_FRAGMENT_SHADER, pointFragmentShader);
+        mPointProgramHandle = ShaderHelper.createAndLinkProgram(pointVertexShaderHandle, pointFragmentShaderHandle,
                 new String[] {"a_Position"});
+
+        // Load the texture
+        mTextureDataHandle = TextureHelper.loadTexture(mActivityContext, R.drawable.rocktexture);
     }
 
     @Override
@@ -439,15 +456,26 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         float angleInDegrees = (360.0f / 10000.0f) * ((int) time);
 
         // Set our per-vertex lighting program.
-        GLES20.glUseProgram(mPerVertexProgramHandle);
+        GLES20.glUseProgram(mProgramHandle);
 
         // Set program handles for cube drawing.
-        mMVPMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVPMatrix");
-        mMVMatrixHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_MVMatrix");
-        mLightPosHandle = GLES20.glGetUniformLocation(mPerVertexProgramHandle, "u_LightPos");
-        mPositionHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Position");
-        mColorHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Color");
-        mNormalHandle = GLES20.glGetAttribLocation(mPerVertexProgramHandle, "a_Normal");
+        mMVPMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVPMatrix");
+        mMVMatrixHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_MVMatrix");
+        mLightPosHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_LightPos");
+        mTextureUniformHandle = GLES20.glGetUniformLocation(mProgramHandle, "u_Texture");
+        mPositionHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Position");
+        mColorHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Color");
+        mNormalHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_Normal");
+        mTextureCoordinateHandle = GLES20.glGetAttribLocation(mProgramHandle, "a_TexCoordinate");
+
+        // Set the active texture unit to texture unit 0.
+        GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
+
+        // Bind the texture to this unit.
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
+
+        // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
+        GLES20.glUniform1i(mTextureUniformHandle, 0);
 
         // Calculate position of the light. Rotate and then push into the distance.
         Matrix.setIdentityM(mLightModelMatrix, 0);
@@ -514,6 +542,13 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
         GLES20.glEnableVertexAttribArray(mNormalHandle);
 
+        // Pass in the texture coordinate information
+        mCubeTextureCoordinates.position(0);
+        GLES20.glVertexAttribPointer(mTextureCoordinateHandle, mTextureCoordinateDataSize, GLES20.GL_FLOAT, false,
+                0, mCubeTextureCoordinates);
+
+        GLES20.glEnableVertexAttribArray(mTextureCoordinateHandle);
+
         // This multiplies the view matrix by the model matrix, and stores the result in the MVP matrix
         // (which currently contains model * view).
         Matrix.multiplyMM(mMVPMatrix, 0, mViewMatrix, 0, mModelMatrix, 0);
@@ -556,99 +591,5 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
         // Draw the point.
         GLES20.glDrawArrays(GLES20.GL_POINTS, 0, 1);
-    }
-
-    /**
-     * Helper function to compile a shader.
-     *
-     * @param shaderType The shader type.
-     * @param shaderSource The shader source code.
-     * @return An OpenGL handle to the shader.
-     */
-    private int compileShader(final int shaderType, final String shaderSource)
-    {
-        int shaderHandle = GLES20.glCreateShader(shaderType);
-
-        if (shaderHandle != 0)
-        {
-            // Pass in the shader source.
-            GLES20.glShaderSource(shaderHandle, shaderSource);
-
-            // Compile the shader.
-            GLES20.glCompileShader(shaderHandle);
-
-            // Get the compilation status.
-            final int[] compileStatus = new int[1];
-            GLES20.glGetShaderiv(shaderHandle, GLES20.GL_COMPILE_STATUS, compileStatus, 0);
-
-            // If the compilation failed, delete the shader.
-            if (compileStatus[0] == 0)
-            {
-                Log.e(TAG, "Error compiling shader: " + GLES20.glGetShaderInfoLog(shaderHandle));
-                GLES20.glDeleteShader(shaderHandle);
-                shaderHandle = 0;
-            }
-        }
-
-        if (shaderHandle == 0)
-        {
-            throw new RuntimeException("Error creating shader.");
-        }
-
-        return shaderHandle;
-    }
-
-    /**
-     * Helper function to compile and link a program.
-     *
-     * @param vertexShaderHandle An OpenGL handle to an already-compiled vertex shader.
-     * @param fragmentShaderHandle An OpenGL handle to an already-compiled fragment shader.
-     * @param attributes Attributes that need to be bound to the program.
-     * @return An OpenGL handle to the program.
-     */
-    private int createAndLinkProgram(final int vertexShaderHandle, final int fragmentShaderHandle, final String[] attributes)
-    {
-        int programHandle = GLES20.glCreateProgram();
-
-        if (programHandle != 0)
-        {
-            // Bind the vertex shader to the program.
-            GLES20.glAttachShader(programHandle, vertexShaderHandle);
-
-            // Bind the fragment shader to the program.
-            GLES20.glAttachShader(programHandle, fragmentShaderHandle);
-
-            // Bind attributes
-            if (attributes != null)
-            {
-                final int size = attributes.length;
-                for (int i = 0; i < size; i++)
-                {
-                    GLES20.glBindAttribLocation(programHandle, i, attributes[i]);
-                }
-            }
-
-            // Link the two shaders together into a program.
-            GLES20.glLinkProgram(programHandle);
-
-            // Get the link status.
-            final int[] linkStatus = new int[1];
-            GLES20.glGetProgramiv(programHandle, GLES20.GL_LINK_STATUS, linkStatus, 0);
-
-            // If the link failed, delete the program.
-            if (linkStatus[0] == 0)
-            {
-                Log.e(TAG, "Error compiling program: " + GLES20.glGetProgramInfoLog(programHandle));
-                GLES20.glDeleteProgram(programHandle);
-                programHandle = 0;
-            }
-        }
-
-        if (programHandle == 0)
-        {
-            throw new RuntimeException("Error creating program.");
-        }
-
-        return programHandle;
     }
 }
