@@ -135,9 +135,9 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, 1.0f, 1.0f,
                         -1.0f, -1.0f, 1.0f,
                         1.0f, -1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f,
+                        1.0f, 1.0f, 1.0f
 
-                        // Right face
+                       /* // Right face
                         1.0f, 1.0f, 1.0f,
                         1.0f, -1.0f, 1.0f,
                         1.0f, 1.0f, -1.0f,
@@ -175,7 +175,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         -1.0f, -1.0f, -1.0f,
                         1.0f, -1.0f, 1.0f,
                         -1.0f, -1.0f, 1.0f,
-                        -1.0f, -1.0f, -1.0f,
+                        -1.0f, -1.0f, -1.0f,*/
                 };
 
         // R, G, B, A
@@ -187,9 +187,9 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, 1.0f, 1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
+                        1.0f, 1.0f, 1.0f, 1.0f
 
-                        // Right face (white)
+                      /*  // Right face (white)
                         1.0f, 1.0f, 1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f,
@@ -227,7 +227,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, 1.0f, 1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f
+                        1.0f, 1.0f, 1.0f, 1.0f*/
                 };
 
         // X, Y, Z
@@ -242,9 +242,9 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         0.0f, 0.0f, 1.0f,
                         0.0f, 0.0f, 1.0f,
                         0.0f, 0.0f, 1.0f,
-                        0.0f, 0.0f, 1.0f,
+                        0.0f, 0.0f, 1.0f
 
-                        // Right face
+                       /* // Right face
                         1.0f, 0.0f, 0.0f,
                         1.0f, 0.0f, 0.0f,
                         1.0f, 0.0f, 0.0f,
@@ -282,7 +282,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         0.0f, -1.0f, 0.0f,
                         0.0f, -1.0f, 0.0f,
                         0.0f, -1.0f, 0.0f,
-                        0.0f, -1.0f, 0.0f
+                        0.0f, -1.0f, 0.0f*/
                 };
 
         // S, T (or X, Y)
@@ -300,7 +300,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, 1.0f,
                         1.0f, 0.0f,
 
-                        // Right face
+                       /* // Right face
                         0.0f, 0.0f,
                         0.0f, 1.0f,
                         1.0f, 0.0f,
@@ -338,7 +338,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, 0.0f,
                         0.0f, 1.0f,
                         1.0f, 1.0f,
-                        1.0f, 0.0f
+                        1.0f, 0.0f*/
                 };
 
         // Initialize the buffers.
@@ -478,7 +478,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         // Calculate position of the light. Rotate and then push into the distance.
         Matrix.setIdentityM(mLightModelMatrix, 0);
         Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, -5.0f);
-        Matrix.rotateM(mLightModelMatrix, 0, angleInDegrees, 0.0f, 1.0f, 0.0f);
+        Matrix.rotateM(mLightModelMatrix, 0, 0.0f, 0.0f, 1.0f, 0.0f);
         Matrix.translateM(mLightModelMatrix, 0, 0.0f, 0.0f, 2.0f);
 
         Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
@@ -487,7 +487,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -5.0f);
-        Matrix.rotateM(mModelMatrix, 0, angleInDegrees, 1.0f, 1.0f, 0.0f);
+        Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
         drawCube();
 
         // Draw a point to indicate the light.
@@ -557,7 +557,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         GLES20.glUniform3f(mLightPosHandle, mLightPosInEyeSpace[0], mLightPosInEyeSpace[1], mLightPosInEyeSpace[2]);
 
         // Draw the cube.
-        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 36);
+        GLES20.glDrawArrays(GLES20.GL_TRIANGLES, 0, 6);
     }
 
     /**
