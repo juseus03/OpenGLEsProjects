@@ -110,7 +110,13 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
     private int mPointProgramHandle;
 
     /** This is a handle to our texture data. */
-    private int mTextureDataHandle;
+    private int mTextureDataHandleSVPP_WHITE_1;
+    /** This is a handle the second texture. */
+    private int mTextureDataHandleSVPP_BLACK_1;
+    /** This is a handle to our texture data. */
+    private int mTextureDataHandleSVPP_WHITE_2;
+    /** This is a handle the second texture. */
+    private int mTextureDataHandleSVPP_BLACK_2;
 
     /**
      * Initialize the model data.
@@ -424,7 +430,11 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                 new String[] {"a_Position"});
 
         // Load the texture
-        mTextureDataHandle = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularblanco);
+        mTextureDataHandleSVPP_WHITE_1 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularblanco);
+        mTextureDataHandleSVPP_BLACK_1 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularnegro);
+        mTextureDataHandleSVPP_WHITE_2 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularblanco2);
+        mTextureDataHandleSVPP_BLACK_2 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularnegro2);
+
     }
 
     @Override
@@ -450,9 +460,12 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         GLES20.glClear(GLES20.GL_COLOR_BUFFER_BIT | GLES20.GL_DEPTH_BUFFER_BIT);
 
         // Do a complete rotation every 10 seconds.
-        long time = SystemClock.uptimeMillis() % 10000L;
-        float flick_time = (10.0f / 10000.0f) * ((int) time);
-        changeTexture(flick_time);
+        long time1 = SystemClock.uptimeMillis() % 100L;
+        float flick_time1 = (1.0f/100.0f) * ((int) time1);
+        long time2 = SystemClock.uptimeMillis() % 120L;
+        float flick_time2 = (1.0f/120.0f) * ((int) time2);
+
+        changeTexture1(flick_time1);
         // Set our per-vertex lighting program.
         GLES20.glUseProgram(mProgramHandle);
 
@@ -470,7 +483,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         GLES20.glActiveTexture(GLES20.GL_TEXTURE0);
 
         // Bind the texture to this unit.
-        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
+        //GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandle);
 
         // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
         GLES20.glUniform1i(mTextureUniformHandle, 0);
@@ -486,7 +499,12 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
 
 
         Matrix.setIdentityM(mModelMatrix, 0);
-        Matrix.translateM(mModelMatrix, 0, 0.0f, 0.0f, -5.0f);
+        Matrix.translateM(mModelMatrix, 0, 1.3f, -2.0f, -5.0f);
+        Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
+        drawSquare();
+        changeTexture2(flick_time2);
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix, 0, -1.3f, -2.0f, -5.0f);
         Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
         drawSquare();
 
@@ -499,14 +517,24 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
      * Changes the information in the texture handle deppending on the value of time
      * @param time: Time in ms passed from the last draw of the frame
      */
-    private void changeTexture(float time) {
+    private void changeTexture1(float time) {
 
-        if(time>5){
-            mTextureDataHandle = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularblanco);
+        if(time>0.5){
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandleSVPP_BLACK_1);
+
         }
         else{
-            mTextureDataHandle = TextureHelper.loadTexture(mActivityContext, R.drawable.rocktexture);
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandleSVPP_WHITE_1);
+        }
+    }
+    private void changeTexture2(float time) {
 
+        if(time>0.5){
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandleSVPP_BLACK_2);
+
+        }
+        else{
+            GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandleSVPP_WHITE_2);
         }
     }
 
