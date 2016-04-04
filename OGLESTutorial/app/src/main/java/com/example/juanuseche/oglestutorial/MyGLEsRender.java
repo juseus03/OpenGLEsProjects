@@ -117,6 +117,11 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
     private int mTextureDataHandleSVPP_WHITE_2;
     /** This is a handle the second texture. */
     private int mTextureDataHandleSVPP_BLACK_2;
+    /** This is a handle the second texture. */
+    private int mTextureDataHandleOP1;
+    /** This is a handle the second texture. */
+    private int mTextureDataHandleOP2;
+    private int mTextureDataHandleOP3;
 
     /**
      * Initialize the model data.
@@ -143,45 +148,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, -1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f
 
-                       /* // Right face
-                        1.0f, 1.0f, 1.0f,
-                        1.0f, -1.0f, 1.0f,
-                        1.0f, 1.0f, -1.0f,
-                        1.0f, -1.0f, 1.0f,
-                        1.0f, -1.0f, -1.0f,
-                        1.0f, 1.0f, -1.0f,
 
-                        // Back face
-                        1.0f, 1.0f, -1.0f,
-                        1.0f, -1.0f, -1.0f,
-                        -1.0f, 1.0f, -1.0f,
-                        1.0f, -1.0f, -1.0f,
-                        -1.0f, -1.0f, -1.0f,
-                        -1.0f, 1.0f, -1.0f,
-
-                        // Left face
-                        -1.0f, 1.0f, -1.0f,
-                        -1.0f, -1.0f, -1.0f,
-                        -1.0f, 1.0f, 1.0f,
-                        -1.0f, -1.0f, -1.0f,
-                        -1.0f, -1.0f, 1.0f,
-                        -1.0f, 1.0f, 1.0f,
-
-                        // Top face
-                        -1.0f, 1.0f, -1.0f,
-                        -1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, -1.0f,
-                        -1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, -1.0f,
-
-                        // Bottom face
-                        1.0f, -1.0f, -1.0f,
-                        1.0f, -1.0f, 1.0f,
-                        -1.0f, -1.0f, -1.0f,
-                        1.0f, -1.0f, 1.0f,
-                        -1.0f, -1.0f, 1.0f,
-                        -1.0f, -1.0f, -1.0f,*/
                 };
 
         // R, G, B, A
@@ -195,45 +162,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, 1.0f, 1.0f, 1.0f,
                         1.0f, 1.0f, 1.0f, 1.0f
 
-                      /*  // Right face (white)
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
 
-                        // Back face (white)
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-
-                        // Left face (white)
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-
-                        // Top face (white)
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-
-                        // Bottom face (white)
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f,
-                        1.0f, 1.0f, 1.0f, 1.0f*/
                 };
 
         // X, Y, Z
@@ -250,45 +179,6 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         0.0f, 0.0f, 1.0f,
                         0.0f, 0.0f, 1.0f
 
-                       /* // Right face
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 0.0f, 0.0f,
-                        1.0f, 0.0f, 0.0f,
-
-                        // Back face
-                        0.0f, 0.0f, -1.0f,
-                        0.0f, 0.0f, -1.0f,
-                        0.0f, 0.0f, -1.0f,
-                        0.0f, 0.0f, -1.0f,
-                        0.0f, 0.0f, -1.0f,
-                        0.0f, 0.0f, -1.0f,
-
-                        // Left face
-                        -1.0f, 0.0f, 0.0f,
-                        -1.0f, 0.0f, 0.0f,
-                        -1.0f, 0.0f, 0.0f,
-                        -1.0f, 0.0f, 0.0f,
-                        -1.0f, 0.0f, 0.0f,
-                        -1.0f, 0.0f, 0.0f,
-
-                        // Top face
-                        0.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f,
-                        0.0f, 1.0f, 0.0f,
-
-                        // Bottom face
-                        0.0f, -1.0f, 0.0f,
-                        0.0f, -1.0f, 0.0f,
-                        0.0f, -1.0f, 0.0f,
-                        0.0f, -1.0f, 0.0f,
-                        0.0f, -1.0f, 0.0f,
-                        0.0f, -1.0f, 0.0f*/
                 };
 
         // S, T (or X, Y)
@@ -306,45 +196,7 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
                         1.0f, 1.0f,
                         1.0f, 0.0f,
 
-                       /* // Right face
-                        0.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 1.0f,
-                        1.0f, 0.0f,
 
-                        // Back face
-                        0.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 1.0f,
-                        1.0f, 0.0f,
-
-                        // Left face
-                        0.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 1.0f,
-                        1.0f, 0.0f,
-
-                        // Top face
-                        0.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 1.0f,
-                        1.0f, 0.0f,
-
-                        // Bottom face
-                        0.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 0.0f,
-                        0.0f, 1.0f,
-                        1.0f, 1.0f,
-                        1.0f, 0.0f*/
                 };
 
         // Initialize the buffers.
@@ -427,13 +279,16 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         final int pointVertexShaderHandle = ShaderHelper.compileShader(GLES20.GL_VERTEX_SHADER, pointVertexShader);
         final int pointFragmentShaderHandle = ShaderHelper.compileShader(GLES20.GL_FRAGMENT_SHADER, pointFragmentShader);
         mPointProgramHandle = ShaderHelper.createAndLinkProgram(pointVertexShaderHandle, pointFragmentShaderHandle,
-                new String[] {"a_Position"});
+                new String[]{"a_Position"});
 
         // Load the texture
         mTextureDataHandleSVPP_WHITE_1 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularblanco);
         mTextureDataHandleSVPP_BLACK_1 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularnegro);
         mTextureDataHandleSVPP_WHITE_2 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularblanco2);
         mTextureDataHandleSVPP_BLACK_2 = TextureHelper.loadTexture(mActivityContext, R.drawable.ssvepcircularnegro2);
+        mTextureDataHandleOP1=TextureHelper.loadTexture(mActivityContext, R.drawable.numero_3);
+        mTextureDataHandleOP2=TextureHelper.loadTexture(mActivityContext, R.drawable.numero_mas);
+        mTextureDataHandleOP3=TextureHelper.loadTexture(mActivityContext, R.drawable.numero_2);
 
     }
 
@@ -465,7 +320,8 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         long time2 = SystemClock.uptimeMillis() % 120L;
         float flick_time2 = (1.0f/120.0f) * ((int) time2);
 
-        changeTexture1(flick_time1);
+
+
         // Set our per-vertex lighting program.
         GLES20.glUseProgram(mProgramHandle);
 
@@ -497,16 +353,35 @@ public class MyGLEsRender implements GLSurfaceView.Renderer {
         Matrix.multiplyMV(mLightPosInWorldSpace, 0, mLightModelMatrix, 0, mLightPosInModelSpace, 0);
         Matrix.multiplyMV(mLightPosInEyeSpace, 0, mViewMatrix, 0, mLightPosInWorldSpace, 0);
 
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandleOP1);
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix, 0, -1.5f, 1.0f, -5.0f);
+        Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
+        drawSquare();
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandleOP2);
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix, 0, 0.0f, 1.0f, -5.0f);
+        Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
+        drawSquare();
 
+        GLES20.glBindTexture(GLES20.GL_TEXTURE_2D, mTextureDataHandleOP3);
+        Matrix.setIdentityM(mModelMatrix, 0);
+        Matrix.translateM(mModelMatrix, 0, 1.5f, 1.0f, -5.0f);
+        Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
+        drawSquare();
+
+        changeTexture1(flick_time1);
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.translateM(mModelMatrix, 0, 1.3f, -2.0f, -5.0f);
         Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
         drawSquare();
+
         changeTexture2(flick_time2);
         Matrix.setIdentityM(mModelMatrix, 0);
         Matrix.translateM(mModelMatrix, 0, -1.3f, -2.0f, -5.0f);
         Matrix.rotateM(mModelMatrix, 0, 0.0f, 1.0f, 1.0f, 0.0f);
         drawSquare();
+
 
         // Draw a point to indicate the light.
         GLES20.glUseProgram(mPointProgramHandle);
